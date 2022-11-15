@@ -1,0 +1,16 @@
+CREATE DATABASE twitter;
+USE twitter;
+
+CREATE TABLE tweets(
+	tweet_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(40) NOT NULL,
+    tweet VARCHAR(200) NOT NULL,
+    likes INT DEFAULT 0 NOT NULL,
+    date_created TIMESTAMP NOT NULL,
+    FOREIGN KEY (username) REFERENCES users(username)
+);
+
+CREATE TABLE hashtags(
+    hashtag VARCHAR(20) NOT NULL,
+    count INT DEFAULT 0 NOT NULL
+);
