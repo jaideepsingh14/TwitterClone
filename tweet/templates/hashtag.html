@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hashtag</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <style>
+    .card form{
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container offset-1 col-sm-10 mt-5">
+    <div class="row">
+      <div class="col-10 offset-1 col-md-8">
+        <div class="row">
+            <h2 class="col-12 text-center">Hashtag: {{request.GET.hashtag}}, Count: {{count}}</h2>
+        </div>
+        {% if not count %}
+          <h2>No tweets present for this hashtag</h2>
+        {% else%}
+          <h2 class="text-center mt-5">All tweets</h2>
+          {% for tweet in tweets %}
+            {% with tweet=tweet.tweet_id %}
+            <!-- <span>{{tweet.tweet_id.tweet}}</span> -->
+            <div class="card my-4">
+              <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted"><a href="/profile?username={{tweet.username}}">@{{tweet.username}}</a> &nbsp;{{tweet.date_created}}</h6>
+                <p class="card-text">{{tweet.tweet}}</p>
+                <form method="POST" action="/like">
+                  {% csrf_token %}
+                  <input type="hidden" name="tweet_id" value={{tweet.tweet_id}}>
+                  {% if request.user != tweet.username %}
+                    <button type="submit" class="btn btn-info" title="If you have liked once, it will unlike on clicking it again">likes({{tweet.likes}})</button>
+                  {% else %}
+                    <span class="btn btn-secondary" title="Can't like your own tweeet">likes({{tweet.likes}})</span>
+                  {% endif %}
+                </form>
+                <form method="POST" action="/delete">
+                  {% csrf_token %}
+                  <input type="hidden" name="tweet_id" value={{tweet.tweet_id}}>
+                  {% if request.user == tweet.username %}
+                    <button type="submit" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;delete</button>
+                  {% endif %}
+                </form>
+              </div>
+            </div>
+            {% endwith %}
+          {% endfor %}
+        {% endif %}
+        <div>
+            {% for message in messages %}
+            <h3> {{message}}  </h3>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
